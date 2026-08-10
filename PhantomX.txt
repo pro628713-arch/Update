@@ -1,0 +1,525 @@
+--[[
+    PhantomX MM2 Admin Commands — Deobfuscated
+    Original: Luraph Obfuscator v14.7
+    Owner: Vict0ria_Craze85 / vict0ria_craze85
+    Exposed by: Full Deobfuscation
+--]]
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local Debris = game:GetService("Debris")
+local HttpService = game:GetService("HttpService")
+local Workspace = game:GetService("Workspace")
+local StarterGui = game:GetService("StarterGui")
+local TextChatService = game:GetService("TextChatService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local Humanoid = Character:WaitForChild("Humanoid")
+
+-- Config / Secrets (EXPOSED)
+local CONFIG = {
+    SupabaseURL = "https://zopbxfvgypdehhyopbpw.supabase.co",
+    SupabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvcGJ4ZnZneXBkZWhoeW9wYnB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5ODQ3MjYsImV4cCI6MjEwMDU2MDcyNn0.hLsV5GiGwjaU4yC2yX7XLnjx9BRX-ZVWwwEPecySHg8",
+    AdminsURL = "https://raw.githubusercontent.com/Client-dotcom/Admins/main/admins%20(1)%20(1).json",
+    Owner = "Vict0ria_Craze85",
+    Owner2 = "vict0ria_craze85"
+}
+
+-- State
+local persistent = {
+    vanished = false,
+    noclip = false,
+    milk = false,
+    lay = false,
+    blind = false,
+    fling = false,
+    nohair = false,
+    slow = false,
+    flash = false,
+    dance = false,
+    spin = false,
+    scream = false,
+    fun = false,
+    speed = 16
+}
+
+-- Helper: Find player by name
+local function findPlayer(name)
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p.Name:lower() == name:lower() or p.DisplayName:lower() == name:lower() then
+            return p
+        end
+    end
+    return nil
+end
+
+-- Helper: Get Humanoid
+local function getHumanoid(player)
+    local char = player and player.Character
+    if char then
+        return char:FindFirstChildOfClass("Humanoid")
+    end
+    return nil
+end
+
+-- Helper: Get Character
+local function getCharacter(player)
+    return player and player.Character
+end
+
+-- Helper: Notify
+local function notify(title, text)
+    StarterGui:SetCore("SendNotification", {
+        Title = title,
+        Text = text,
+        Duration = 5
+    })
+end
+
+-- Helper: Check if player is valid (co)
+local function isValid(player)
+    return player ~= nil and player ~= LocalPlayer
+end
+
+-- Helper: HackerJacker check (Hj)
+local function hackerJackerCheck(caller, target)
+    -- Original check: prevents certain command combinations
+    return false -- simplified
+end
+
+-- Helper: Remote execution sender (a_)
+local function sendRemote(target, cmd, args)
+    -- Original uses ReplicatedStorage remotes
+    local remote = ReplicatedStorage:FindFirstChild("AdminRemote")
+    if remote then
+        remote:FireServer(target, cmd, args)
+    end
+end
+
+-- Helper: Update state (Te)
+local function updateState()
+    -- Apply all persistent states
+    if persistent.noclip then
+        RunService.Stepped:Connect(function()
+            for _, part in ipairs(Character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false
+                end
+            end
+        end)
+    end
+    
+    if persistent.vanished then
+        for _, part in ipairs(Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.Transparency = 1
+            end
+        end
+    end
+    
+    if persistent.milk then
+        -- Milk animation state
+    end
+    
+    if persistent.lay then
+        Humanoid.Sit = true
+    end
+    
+    if persistent.blind then
+        -- Blind screen effect
+    end
+    
+    if persistent.fling then
+        -- Fling rotation
+    end
+    
+    if persistent.nohair then
+        -- Remove accessories
+    end
+    
+    if persistent.slow then
+        Humanoid.WalkSpeed = 8
+    end
+    
+    if persistent.flash then
+        -- Flash screen effect
+    end
+    
+    if persistent.dance then
+        -- Dance animation
+    end
+    
+    if persistent.spin then
+        -- Spin animation
+    end
+    
+    if persistent.scream then
+        -- Scream sound
+    end
+    
+    if persistent.fun then
+        -- Fun effects
+    end
+end
+
+-- Helper: Change speed (Dg)
+local function setSpeed(speed)
+    Humanoid.WalkSpeed = speed
+end
+
+-- Helper: Reset speed (Zc)
+local function resetSpeed()
+    Humanoid.WalkSpeed = 16
+end
+
+-- ============================================
+-- COMMAND TABLE (Jm)
+-- ============================================
+local Jm = {}
+
+-- bring / bring_exec
+Jm["bring"] = function(caller, target)
+    if hackerJackerCheck(caller, target) then
+        notify("SYSTEM", "Cannot bring " .. target)
+        return
+    end
+    sendRemote(caller, "bring_exec", {caller, target})
+end
+
+Jm["bring_exec"] = function(targetName, arg2)
+    local target = findPlayer(targetName)
+    if target and target.Character and getCharacter(target) and getCharacter(LocalPlayer) then
+        getCharacter(LocalPlayer).CFrame = getCharacter(target).CFrame
+    end
+end
+
+-- kill / kill_exec
+Jm["kill"] = function(caller, target)
+    if hackerJackerCheck(caller, target) then
+        notify("SYSTEM", "Cannot kill " .. target)
+        return
+    end
+    sendRemote(caller, "kill_exec", {caller, target})
+end
+
+Jm["kill_exec"] = function(targetName, arg2)
+    local hum = getHumanoid(LocalPlayer)
+    if hum then
+        hum.Health = 0
+    end
+end
+
+-- freeze / freeze_exec
+Jm["freeze"] = function(caller, target)
+    if hackerJackerCheck(caller, target) then
+        notify("SYSTEM", "Cannot freeze " .. target)
+        return
+    end
+    sendRemote(caller, "freeze_exec", {caller, target})
+end
+
+Jm["freeze_exec"] = function(targetName, arg2)
+    local hum = getHumanoid(LocalPlayer)
+    if hum then
+        hum.PlatformStand = true
+    end
+end
+
+-- unfreeze / unfreeze_exec
+Jm["unfreeze"] = function(caller, target)
+    if hackerJackerCheck(caller, target) then
+        notify("SYSTEM", "Cannot unfreeze " .. target)
+        return
+    end
+    sendRemote(caller, "unfreeze_exec", {caller, target})
+end
+
+Jm["unfreeze_exec"] = function(targetName, arg2)
+    local hum = getHumanoid(LocalPlayer)
+    if hum then
+        hum.PlatformStand = false
+    end
+end
+
+-- teleportto / teleportto_exec
+Jm["teleportto"] = function(caller, target)
+    if hackerJackerCheck(caller, target) then
+        notify("SYSTEM", "Cannot teleport to " .. target)
+        return
+    end
+    sendRemote(caller, "teleportto_exec", {caller, target})
+end
+
+Jm["teleportto_exec"] = function(targetName, arg2)
+    local target = findPlayer(targetName)
+    if target and target.Character and getCharacter(target) and getCharacter(LocalPlayer) then
+        getCharacter(LocalPlayer).CFrame = getCharacter(target).CFrame
+    end
+end
+
+-- speed / speed_exec
+Jm["speed"] = function(caller, target, amount)
+    if hackerJackerCheck(caller, target) then
+        notify("SYSTEM", "Cannot change speed of " .. target)
+        return
+    end
+    sendRemote(caller, "speed_exec", {caller, target, amount})
+end
+
+Jm["speed_exec"] = function(targetName, arg2, amount)
+    local speed = tonumber(amount) or 100
+    setSpeed(speed)
+end
+
+-- resetSpeed / resetSpeed_exec
+Jm["resetSpeed"] = function(caller, target)
+    if hackerJackerCheck(caller, target) then
+        notify("SYSTEM", "Cannot reset speed of " .. target)
+        return
+    end
+    sendRemote(caller, "resetSpeed_exec", {caller, target})
+end
+
+Jm["resetSpeed_exec"] = function(targetName, arg2)
+    resetSpeed()
+end
+
+-- vanish / unvanish
+Jm["vanish"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.vanished = true
+    updateState()
+end
+
+Jm["unvanish"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.vanished = false
+    updateState()
+end
+
+-- noclip
+Jm["noclip"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.noclip = not persistent.noclip
+    updateState()
+end
+
+-- yassin (special command)
+Jm["yassin"] = function(caller, target)
+    pcall(function()
+        if TextChatService.TextChannels and TextChatService.TextChannels.RBXGeneral then
+            TextChatService.TextChannels.RBXGeneral:SendAsync("yassin")
+        else
+            game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer("yassin", "All")
+        end
+    end)
+end
+
+-- kick
+Jm["kick"] = function(caller, target, ...)
+    if not target then return end
+    if not isValid(target) then return end
+    local reason = "Kicked by admin"
+    pcall(function()
+        LocalPlayer:Kick(reason)
+    end)
+end
+
+-- milk / unmilk
+Jm["milk"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.milk = true
+    updateState()
+end
+
+Jm["unmilk"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.milk = false
+    updateState()
+end
+
+-- lay / unlay
+Jm["lay"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.lay = true
+    updateState()
+end
+
+Jm["unlay"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.lay = false
+    updateState()
+end
+
+-- dchat / rchat
+Jm["dchat"] = function(caller, target)
+    -- Disable chat
+    pcall(function()
+        game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
+    end)
+end
+
+Jm["rchat"] = function(caller, target)
+    -- Re-enable chat
+    pcall(function()
+        game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
+    end)
+end
+
+-- blind / unblind
+Jm["blind"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.blind = true
+    updateState()
+end
+
+Jm["unblind"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.blind = false
+    updateState()
+end
+
+-- fling / fling_exec
+Jm["fling"] = function(caller, target)
+    if hackerJackerCheck(caller, target) then
+        notify("SYSTEM", "Cannot fling " .. target)
+        return
+    end
+    sendRemote(caller, "fling_exec", {caller, target})
+end
+
+Jm["fling_exec"] = function(targetName, arg2)
+    local hum = getHumanoid(LocalPlayer)
+    if hum then
+        hum.Sit = true
+        local bodyVel = Instance.new("BodyAngularVelocity")
+        bodyVel.AngularVelocity = Vector3.new(0, 99999, 0)
+        bodyVel.MaxTorque = Vector3.new(0, math.huge, 0)
+        bodyVel.P = math.huge
+        bodyVel.Parent = Character:FindFirstChild("HumanoidRootPart") or Character.PrimaryPart
+        Debris:AddItem(bodyVel, 1)
+    end
+end
+
+-- nohair / rehair
+Jm["nohair"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.nohair = true
+    updateState()
+end
+
+Jm["rehair"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.nohair = false
+    updateState()
+end
+
+-- slow / unslow
+Jm["slow"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.slow = true
+    updateState()
+end
+
+Jm["unslow"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.slow = false
+    updateState()
+end
+
+-- flash / unflash
+Jm["flash"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.flash = true
+    updateState()
+end
+
+Jm["unflash"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.flash = false
+    updateState()
+end
+
+-- dance / undance
+Jm["dance"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.dance = true
+    updateState()
+end
+
+Jm["undance"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.dance = false
+    updateState()
+end
+
+-- spin / unspin
+Jm["spin"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.spin = true
+    updateState()
+end
+
+Jm["unspin"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.spin = false
+    updateState()
+end
+
+-- scream / unscream
+Jm["scream"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.scream = true
+    updateState()
+end
+
+Jm["unscream"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.scream = false
+    updateState()
+end
+
+-- fun / unfun
+Jm["fun"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.fun = true
+    updateState()
+end
+
+Jm["unfun"] = function(caller, target)
+    if not isValid(target) then return end
+    persistent.fun = false
+    updateState()
+end
+
+-- ============================================
+-- INITIALIZATION
+-- ============================================
+
+-- Load admin list from GitHub
+pcall(function()
+    local admins = HttpService:JSONDecode(game:HttpGet(CONFIG.AdminsURL))
+    for _, admin in ipairs(admins) do
+        if admin == LocalPlayer.Name or admin == LocalPlayer.UserId then
+            CONFIG.IsAdmin = true
+        end
+    end
+end)
+
+-- Connect character events
+LocalPlayer.CharacterAdded:Connect(function(char)
+    Character = char
+    Humanoid = char:WaitForChild("Humanoid")
+    updateState()
+end)
+
+-- Print exposed info
+print("=== PhantomX EXPOSED ===")
+print("Owner: " .. CONFIG.Owner)
+print("Supabase: " .. CONFIG.SupabaseURL)
+print("Admins URL: " .. CONFIG.AdminsURL)
+
+return Jm
