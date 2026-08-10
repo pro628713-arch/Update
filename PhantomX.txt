@@ -1,6 +1,6 @@
 --[[
     PhantomX MM2 Admin Commands — Deobfuscated
-    Original: Luraph Obfuscator v14.7
+    credit;  by zenix inv
     Owner: Vict0ria_Craze85 / vict0ria_craze85
     Exposed by: Full Deobfuscation
 --]]
